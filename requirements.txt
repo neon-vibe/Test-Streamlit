@@ -1,6 +1,7 @@
 streamlit>=1.0.0
 streamlit-folium>=0.10.0
 folium>=0.14.0
+pandas
 geopandas
 shapely
 pandas

@@ -6,6 +6,7 @@ from streamlit_folium import st_folium
 import folium
 import folium.plugins
 from streamlit.components.v1 import html
+import pandas as pd
 import geopandas as gpd
 from shapely.geometry import shape
 
@@ -130,7 +131,7 @@ if output and output.get("all_drawings"):
             }
             gdf = st.session_state.gdf
             #gdf = gdf.append(new_record, ignore_index=True)
-            gdf = gpd.concat([gdf, new_record], axis=0, ignore_index=True)
+            gdf = pd.concat([gdf, new_record], axis=0, ignore_index=True)
             gdf.set_crs(epsg=4326, inplace=True)
             st.session_state.gdf = gdf
 
