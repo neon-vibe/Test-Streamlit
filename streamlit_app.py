@@ -117,7 +117,7 @@ if output and output.get("all_drawings"):
     if geom.is_empty:
         st.error("❌ Geometry is empty. Please draw a valid polygon.")
     elif not geom.is_valid:
-        st.error("❌ Geometry is invalid. Please simplify or redraw.")
+        st.error("❌ Geometry is invalid. Please simplify or redraw and avoid self intersections and holes.")
     else:
         default_name = f"AOI {len(st.session_state.gdf) + 1}"
         name = st.text_input("Give this AOI a name", value=default_name)
