@@ -125,12 +125,12 @@ if output and output.get("all_drawings"):
         if st.button("💾 Save AOI"):
             # Append to GeoDataFrame
             new_record = gpd.GeoDataFrame({
-                "name": name,
-                "timestamp": datetime.datetime.utcnow(),
-                "geometry": geom,
-            })
+                "name": [name],
+                "timestamp": [datetime.datetime.utcnow()],
+                "geometry": [geom],
+            }, geometry="geometry", crs="EPSG:4326")
+
             gdf = st.session_state.gdf
-            #gdf = gdf.append(new_record, ignore_index=True)
             gdf = pd.concat([gdf, new_record], axis=0, ignore_index=True)
             gdf.set_crs(epsg=4326, inplace=True)
             st.session_state.gdf = gdf
@@ -150,13 +150,23 @@ else:
 gdf = st.session_state.gdf
 if not gdf.empty:
     st.subheader("📦 Saved AOIs")
+
     # Table of attributes (excluding geometry for clarity)
     st.dataframe(gdf.drop(columns="geometry"))
+
+    # Add latitude/longitude for st.map
+    if gdf.geometry.geom_type.eq("Point").all():
+        gdf["latitude"] = gdf.geometry.y
+        gdf["longitude"] = gdf.geometry.x
+    else:
+        # For Polygon or other geometries: use centroid
+        gdf["latitude"] = gdf.geometry.centroid.y
+        gdf["longitude"] = gdf.geometry.centroid.x
+
     # Quick map preview
     st.map(gdf)
 
     # Download buttons
-    # GeoJSON
     geojson_str = gdf.to_json()
     st.download_button(
         label="⬇️ Download GeoJSON",
@@ -164,7 +174,7 @@ if not gdf.empty:
         file_name="aois.geojson",
         mime="application/geo+json",
     )
-    # GeoPackage
+
     with open(GPKG_PATH, "rb") as f:
         gpkg_bytes = f.read()
     st.download_button(
@@ -173,7 +183,7 @@ if not gdf.empty:
         file_name="aois.gpkg",
         mime="application/geopackage+sqlite3",
     )
-    # Parquet
+
     with open(PARQUET_PATH, "rb") as f:
         pq_bytes = f.read()
     st.download_button(
