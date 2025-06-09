@@ -129,7 +129,8 @@ if output and output.get("all_drawings"):
                 "geometry": geom,
             }
             gdf = st.session_state.gdf
-            gdf = gdf.append(new_record, ignore_index=True)
+            #gdf = gdf.append(new_record, ignore_index=True)
+            gdf = gpd.concat([gdf, new_record], axis=0, ignore_index=True)
             gdf.set_crs(epsg=4326, inplace=True)
             st.session_state.gdf = gdf
 
