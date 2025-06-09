@@ -124,11 +124,11 @@ if output and output.get("all_drawings"):
         name = st.text_input("Give this AOI a name", value=default_name)
         if st.button("💾 Save AOI"):
             # Append to GeoDataFrame
-            new_record = {
+            new_record = gpd.GeoDataFrame({
                 "name": name,
                 "timestamp": datetime.datetime.utcnow(),
                 "geometry": geom,
-            }
+            })
             gdf = st.session_state.gdf
             #gdf = gdf.append(new_record, ignore_index=True)
             gdf = pd.concat([gdf, new_record], axis=0, ignore_index=True)
